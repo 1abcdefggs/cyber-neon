@@ -1,0 +1,89 @@
+<svg width="1000" height="140" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    @keyframes flicker {
+      0%   { opacity: 0.1 }
+      10%  { opacity: 0.7 }
+      20%  { opacity: 0.3 }
+      30%  { opacity: 0.9 }
+      40%  { opacity: 0.4 }
+      50%  { opacity: 1 }
+      60%  { opacity: 0.5 }
+      70%  { opacity: 1 }
+      80%  { opacity: 0.2 }
+      90%  { opacity: 0.95 }
+      100% { opacity: 1 }
+    }
+
+    @keyframes reveal {
+      0%   { opacity: 0 }
+      100% { opacity: 1 }
+    }
+
+    .noise {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 26px;
+      fill: #00F0FF33;
+      filter: drop-shadow(0 0 4px #00F0FF);
+      animation: flicker 1.8s infinite;
+    }
+
+    .final-cyan {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 26px;
+      fill: #00F0FF;
+      filter: drop-shadow(0 0 6px #00F0FF);
+      opacity: 0;
+      animation: reveal 1.2s forwards, flicker 3s infinite 1.2s;
+    }
+
+    .final-pink {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 26px;
+      fill: #FF3399;
+      filter: drop-shadow(0 0 6px #FF3399);
+      opacity: 0;
+      animation: reveal 1.2s forwards, flicker 3s infinite 1.2s;
+    }
+  </style>
+
+  <!-- random noise -->
+  <text x="60"  y="80" class="noise" style="animation-delay:0s">█</text>
+  <text x="220" y="80" class="noise" style="animation-delay:0.3s">█</text>
+  <text x="420" y="80" class="noise" style="animation-delay:0.6s">█</text>
+  <text x="640" y="80" class="noise" style="animation-delay:0.9s">█</text>
+  <text x="840" y="80" class="noise" style="animation-delay:1.2s">█</text>
+
+  <!-- CYBER -->
+  <text x="40"  y="80" class="final-cyan">C</text>
+  <text x="80"  y="80" class="final-cyan" style="animation-delay:0.10s">Y</text>
+  <text x="120" y="80" class="final-cyan" style="animation-delay:0.20s">B</text>
+  <text x="160" y="80" class="final-cyan" style="animation-delay:0.30s">E</text>
+  <text x="200" y="80" class="final-cyan" style="animation-delay:0.40s">R</text>
+
+  <!-- space -->
+  <text x="240" y="80" class="final-cyan" style="animation-delay:0.45s"> </text>
+
+  <!-- PINKS -->
+  <text x="280" y="80" class="final-pink" style="animation-delay:0.50s">P</text>
+  <text x="320" y="80" class="final-pink" style="animation-delay:0.60s">I</text>
+  <text x="360" y="80" class="final-pink" style="animation-delay:0.70s">N</text>
+  <text x="400" y="80" class="final-pink" style="animation-delay:0.80s">K</text>
+  <text x="440" y="80" class="final-pink" style="animation-delay:0.90s">S</text>
+
+  <!-- space -->
+  <text x="480" y="80" class="final-cyan" style="animation-delay:0.95s"> </text>
+
+  <!-- ORGANIZATION -->
+  <text x="520" y="80" class="final-cyan" style="animation-delay:1.00s">O</text>
+  <text x="560" y="80" class="final-cyan" style="animation-delay:1.10s">R</text>
+  <text x="600" y="80" class="final-cyan" style="animation-delay:1.20s">G</text>
+  <text x="640" y="80" class="final-cyan" style="animation-delay:1.30s">A</text>
+  <text x="680" y="80" class="final-cyan" style="animation-delay:1.40s">N</text>
+  <text x="720" y="80" class="final-cyan" style="animation-delay:1.50s">I</text>
+  <text x="760" y="80" class="final-cyan" style="animation-delay:1.60s">Z</text>
+  <text x="800" y="80" class="final-cyan" style="animation-delay:1.70s">A</text>
+  <text x="840" y="80" class="final-cyan" style="animation-delay:1.80s">T</text>
+  <text x="880" y="80" class="final-cyan" style="animation-delay:1.90s">I</text>
+  <text x="920" y="80" class="final-cyan" style="animation-delay:2.00s">O</text>
+  <text x="960" y="80" class="final-cyan" style="animation-delay:2.10s">N</text>
+</svg>
