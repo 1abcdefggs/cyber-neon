@@ -5,37 +5,88 @@
   <title>Cyber Neon Generator</title>
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700&family=VT323&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700&family=VT323&family=Fira+Code:wght@400;700&family=Pixelify+Sans:wght@400;700&family=DotGothic16&family=Share+Tech+Mono&family=Space+Grotesk:wght@400;700&family=Space+Mono&family=Electrolize&family=Syncopate:wght@400;700&family=Oxanium:wght@400;700&display=swap" rel="stylesheet">
 
+  <style>
+    body {
+      background: black;
+      color: white;
+      text-align: center;
+      padding-top: 30px;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Animations */
+    @keyframes flicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; }
+      20%, 24%, 55% { opacity: 0.4; }
+    }
+
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(-2px, -2px); }
+      60% { transform: translate(2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+      100% { transform: translate(0); }
+    }
+
+    @keyframes pulse {
+      0% { filter: brightness(1); }
+      50% { filter: brightness(2); }
+      100% { filter: brightness(1); }
+    }
+  </style>
 </head>
-<body style="background:black; color:white; text-align:center; padding-top:40px;">
+
+<body>
 
   <h1 style="color:hotpink;">Cyber Neon Text Generator</h1>
 
-  <!-- Font Controls -->
+  <!-- Controls -->
   <div style="margin-bottom:20px;">
 
     <!-- Font Select -->
-    <label style="color:white;">Font:</label>
-    <select id="fontSelect" style="padding:5px; font-size:16px;">
-      <option value="'Press Start 2P', cursive">Press Start 2P</option>
-      <option value="'Orbitron', sans-serif">Orbitron</option>
-      <option value="'VT323', monospace">VT323</option>
-      <option value="'Fira Code', monospace">Fira Code</option>
+    <label>Font:</label>
+    <select id="fontSelect" style="padding:5px;">
+      <option value="'Press Start 2P', cursive">Press Start 2P (8bit)</option>
+      <option value="'Orbitron', sans-serif">Orbitron (Cyber)</option>
+      <option value="'VT323', monospace">VT323 (Terminal)</option>
+      <option value="'Fira Code', monospace">Fira Code (Coding)</option>
+      <option value="'Pixelify Sans', sans-serif">Pixelify Sans (Pixel)</option>
+      <option value="'DotGothic16', sans-serif">DotGothic16 (Dot)</option>
+      <option value="'Share Tech Mono', monospace">Share Tech Mono</option>
+      <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
+      <option value="'Space Mono', monospace">Space Mono</option>
+      <option value="'Electrolize', sans-serif">Electrolize</option>
+      <option value="'Syncopate', sans-serif">Syncopate</option>
+      <option value="'Oxanium', sans-serif">Oxanium</option>
     </select>
 
-    <!-- Font Size -->
-    <label style="color:white; margin-left:20px;">Size:</label>
-    <input id="fontSize" type="number" value="48" min="10" max="200"
-           style="width:70px; padding:5px;">
+    <!-- Size -->
+    <label style="margin-left:20px;">Size:</label>
+    <input id="fontSize" type="number" value="64" min="10" max="200" style="width:70px;">
 
-    <!-- Font Color -->
-    <label style="color:white; margin-left:20px;">Color:</label>
+    <!-- Color -->
+    <label style="margin-left:20px;">Color:</label>
     <input id="fontColor" type="color" value="#ff69b4">
 
-    <!-- Background Color -->
-    <label style="color:white; margin-left:20px;">BG:</label>
+    <!-- Background -->
+    <label style="margin-left:20px;">BG:</label>
     <input id="bgColor" type="color" value="#000000">
+
+    <!-- Glow -->
+    <label style="margin-left:20px;">Glow:</label>
+    <input id="glowRange" type="range" min="0" max="20" value="4">
+
+    <!-- Animation -->
+    <label style="margin-left:20px;">Animation:</label>
+    <select id="animSelect">
+      <option value="none">None</option>
+      <option value="flicker">Flicker</option>
+      <option value="glitch">Glitch</option>
+      <option value="pulse">Pulse</option>
+    </select>
 
   </div>
 
@@ -44,14 +95,26 @@
          style="font-size:20px; padding:5px; width:300px;">
 
   <!-- SVG -->
-  <svg id="neon" width="800" height="200" style="margin-top:20px;">
-    <text id="neonText" x="50" y="120" font-size="48" fill="hotpink"
+  <svg id="neon" width="900" height="250" style="margin-top:20px;">
+
+    <defs>
+      <filter id="neonGlow">
+        <feGaussianBlur stdDeviation="4" result="blur"/>
+        <feMerge>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="blur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+    </defs>
+
+    <text id="neonText" x="50" y="150" font-size="64" fill="hotpink"
+          filter="url(#neonGlow)"
           style="font-family: 'Press Start 2P', cursive;">
       CYBER NEON
     </text>
   </svg>
 
-  <!-- JavaScript -->
   <script>
     const input = document.getElementById("textInput");
     const neonText = document.getElementById("neonText");
@@ -59,31 +122,41 @@
     const fontSize = document.getElementById("fontSize");
     const fontColor = document.getElementById("fontColor");
     const bgColor = document.getElementById("bgColor");
+    const glowRange = document.getElementById("glowRange");
+    const animSelect = document.getElementById("animSelect");
     const svg = document.getElementById("neon");
 
-    // Update text
     input.addEventListener("input", () => {
       neonText.textContent = input.value;
     });
 
-    // Change font
     fontSelect.addEventListener("change", () => {
       neonText.style.fontFamily = fontSelect.value;
     });
 
-    // Change size
     fontSize.addEventListener("input", () => {
       neonText.setAttribute("font-size", fontSize.value);
     });
 
-    // Change text color
     fontColor.addEventListener("input", () => {
       neonText.setAttribute("fill", fontColor.value);
     });
 
-    // Change background color
     bgColor.addEventListener("input", () => {
       svg.style.background = bgColor.value;
+    });
+
+    glowRange.addEventListener("input", () => {
+      const blur = glowRange.value;
+      document.querySelector("#neonGlow feGaussianBlur")
+        .setAttribute("stdDeviation", blur);
+    });
+
+    animSelect.addEventListener("change", () => {
+      neonText.style.animation =
+        animSelect.value === "none"
+        ? "none"
+        : `${animSelect.value} 2s infinite`;
     });
   </script>
 
