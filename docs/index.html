@@ -48,20 +48,7 @@
 
     <!-- Font Select -->
     <label>Font:</label>
-    <select id="fontSelect" style="padding:5px;">
-      <option value="'Press Start 2P', cursive">Press Start 2P (8bit)</option>
-      <option value="'Orbitron', sans-serif">Orbitron (Cyber)</option>
-      <option value="'VT323', monospace">VT323 (Terminal)</option>
-      <option value="'Fira Code', monospace">Fira Code (Coding)</option>
-      <option value="'Pixelify Sans', sans-serif">Pixelify Sans (Pixel)</option>
-      <option value="'DotGothic16', sans-serif">DotGothic16 (Dot)</option>
-      <option value="'Share Tech Mono', monospace">Share Tech Mono</option>
-      <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
-      <option value="'Space Mono', monospace">Space Mono</option>
-      <option value="'Electrolize', sans-serif">Electrolize</option>
-      <option value="'Syncopate', sans-serif">Syncopate</option>
-      <option value="'Oxanium', sans-serif">Oxanium</option>
-    </select>
+    <select id="fontSelect" style="padding:5px;"></select>
 
     <!-- Size -->
     <label style="margin-left:20px;">Size:</label>
@@ -114,51 +101,34 @@
       CYBER NEON
     </text>
   </svg>
-
   <script>
-    const input = document.getElementById("textInput");
-    const neonText = document.getElementById("neonText");
-    const fontSelect = document.getElementById("fontSelect");
-    const fontSize = document.getElementById("fontSize");
-    const fontColor = document.getElementById("fontColor");
-    const bgColor = document.getElementById("bgColor");
-    const glowRange = document.getElementById("glowRange");
-    const animSelect = document.getElementById("animSelect");
-    const svg = document.getElementById("neon");
+const fonts = [
+  { name: "Press Start 2P (8bit)", value: "'Press Start 2P', cursive" },
+  { name: "Orbitron (Cyber)", value: "'Orbitron', sans-serif" },
+  { name: "VT323 (Terminal)", value: "'VT323', monospace" },
+  { name: "Fira Code (Coding)", value: "'Fira Code', monospace" },
+  { name: "Pixelify Sans (Pixel)", value: "'Pixelify Sans', sans-serif" },
+  { name: "DotGothic16 (Dot)", value: "'DotGothic16', sans-serif" },
+  { name: "Share Tech Mono", value: "'Share Tech Mono', monospace" },
+  { name: "Space Grotesk", value: "'Space Grotesk', sans-serif" },
+  { name: "Space Mono", value: "'Space Mono', monospace" },
+  { name: "Electrolize", value: "'Electrolize', sans-serif" },
+  { name: "Syncopate", value: "'Syncopate', sans-serif" },
+  { name: "Oxanium", value: "'Oxanium', sans-serif" }
+];
 
-    input.addEventListener("input", () => {
-      neonText.textContent = input.value;
-    });
+const fontSelect = document.getElementById("fontSelect");
 
-    fontSelect.addEventListener("change", () => {
-      neonText.style.fontFamily = fontSelect.value;
-    });
+fonts.forEach(font => {
+  const option = document.createElement("option");
+  option.value = font.value;
+  option.textContent = font.name;
+  option.style.fontFamily = font.value;
+  fontSelect.appendChild(option);
+});
+</script>
 
-    fontSize.addEventListener("input", () => {
-      neonText.setAttribute("font-size", fontSize.value);
-    });
 
-    fontColor.addEventListener("input", () => {
-      neonText.setAttribute("fill", fontColor.value);
-    });
-
-    bgColor.addEventListener("input", () => {
-      svg.style.background = bgColor.value;
-    });
-
-    glowRange.addEventListener("input", () => {
-      const blur = glowRange.value;
-      document.querySelector("#neonGlow feGaussianBlur")
-        .setAttribute("stdDeviation", blur);
-    });
-
-    animSelect.addEventListener("change", () => {
-      neonText.style.animation =
-        animSelect.value === "none"
-        ? "none"
-        : `${animSelect.value} 2s infinite`;
-    });
-  </script>
 
 </body>
 </html>
