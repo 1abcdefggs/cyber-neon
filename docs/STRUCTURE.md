@@ -8,8 +8,12 @@ This repository is a small static web project for creating and publishing neon-t
 .
 ├── README.md
 ├── LICENSE
+├── .github/
+│   └── workflows/
+│       └── docs-check.yml
 └── docs/
     ├── index.html
+    ├── STRUCTURE.md
     ├── cyber-pinks-organization.svg
     └── neon-smil.svg
 ```
@@ -20,6 +24,7 @@ This repository is a small static web project for creating and publishing neon-t
 | --- | --- |
 | `README.md` | Project landing page. It displays the published CYBER PINKS SVG banner and links contributors to this structure guide. |
 | `LICENSE` | Repository license terms. Review this before reusing the artwork or code. |
+| `.github/workflows/docs-check.yml` | Lightweight GitHub Actions status check that validates required static-site files and Markdown links. |
 | `docs/` | Static site root. GitHub Pages can publish this directory as the live project site. |
 | `docs/index.html` | The neon SVG generator. It contains the HTML, Alpine.js state, CSS styling, live SVG preview, and SVG download logic in one file. |
 | `docs/cyber-pinks-organization.svg` | The main animated organization banner referenced by the README. |
@@ -61,6 +66,18 @@ Edit `docs/index.html`:
 ### Update README artwork
 
 The README currently embeds the hosted `cyber-pinks-organization.svg`. To change that banner, edit `docs/cyber-pinks-organization.svg`. To use a newly downloaded generator output instead, place the new SVG in `docs/` and update the README image URL.
+
+## GitHub branch protection
+
+The warning "Your main branch isn't protected" is a repository setting, not a code issue. A maintainer with repository admin access should configure GitHub branch protection or a branch ruleset for `main`:
+
+1. Open the repository on GitHub and go to **Settings**.
+2. Open **Branches** or **Rules** and add a rule that targets `main`.
+3. Disable force pushes and branch deletion for `main`.
+4. Require pull requests before merging.
+5. Require status checks before merging, then select the `docs-check / validate-static-docs` workflow check after it has run at least once.
+
+This repository includes `.github/workflows/docs-check.yml` so GitHub has a lightweight status check that maintainers can require before merging documentation or static-site changes.
 
 ## Validation checklist
 
