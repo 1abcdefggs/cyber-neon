@@ -70,6 +70,54 @@
       { name: 'DotGothic16 (Dot)', value: '\'DotGothic16\', sans-serif' },
       { name: 'Space Grotesk', value: '\'Space Grotesk\', sans-serif' }
     ],
+
+async downloadSVG() {
+      // 1. DOM clone
+      const originalSvg = document.getElementById('export-svg');
+      const clonedSvg = originalSvg.cloneNode(true);
+
+      // 2. get font
+      const fontName = this.selectedFont.split(',')[0].replace(/['"]/g, '').trim();
+      const gFontUrl = `https://fonts.googleapis.com/css2?family=${fontName.replace(/ /g, '+')}&display=swap`;
+
+      try {
+        // 3. font checked Base64
+        const cssResp = await fetch(gFontUrl);
+        const cssText = await cssResp.text();
+        const woff2Match = cssText.match(/url\((https:\/\/[^)]+\.woff2)\)/);
+
+        if (woff2Match) {
+          const fontUrl = woff2Match[1];
+          const fontBlob = await (await fetch(fontUrl)).blob();
+          
+          const base64Font = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsDataURL(fontBlob);
+          });
+
+          // 4. SVG style Base64 font 
+          const styleElement = document.createElement('style');
+          styleElement.textContent = `@font-face { font-family: '${fontName}'; src: url(${base64Font}) format('woff2'); }`;
+          clonedSvg.insertBefore(styleElement, clonedSvg.firstChild);
+        }
+      } catch (err) {
+        console.warn("Font embedding failed, using standard fonts.", err);
+      }
+
+      // 5. run dl
+      let svgString = new XMLSerializer().serializeToString(clonedSvg);
+      svgString = svgString.replace(/^<svg/, '<svg xmlns=\'http://www.w3.org/2000/svg\'');
+      
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(new Blob([svgString], { type: 'image/svg+xml' }));
+      link.download = 'cyber-readme.svg';
+      link.click();
+    }
+
+
+
+
     downloadSVG() {
       const svgString = new XMLSerializer().serializeToString(document.getElementById('export-svg')).replace(/^<svg/, '<svg xmlns=\'http://www.w3.org/2000/svg\'');
       const link = document.createElement('a');
