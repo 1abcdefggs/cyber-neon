@@ -2,30 +2,88 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Cyber Neon</title>
+  <title>Cyber Neon Generator</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700&family=VT323&family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+
 </head>
-<body style="background:black; color:white; text-align:center; padding-top:50px;">
+<body style="background:black; color:white; text-align:center; padding-top:40px;">
 
   <h1 style="color:hotpink;">Cyber Neon Text Generator</h1>
 
-  <!-- Input Form -->
-  <input id="textInput" type="text" placeholder="Enter text" 
+  <!-- Font Controls -->
+  <div style="margin-bottom:20px;">
+
+    <!-- Font Select -->
+    <label style="color:white;">Font:</label>
+    <select id="fontSelect" style="padding:5px; font-size:16px;">
+      <option value="'Press Start 2P', cursive">Press Start 2P</option>
+      <option value="'Orbitron', sans-serif">Orbitron</option>
+      <option value="'VT323', monospace">VT323</option>
+      <option value="'Fira Code', monospace">Fira Code</option>
+    </select>
+
+    <!-- Font Size -->
+    <label style="color:white; margin-left:20px;">Size:</label>
+    <input id="fontSize" type="number" value="48" min="10" max="200"
+           style="width:70px; padding:5px;">
+
+    <!-- Font Color -->
+    <label style="color:white; margin-left:20px;">Color:</label>
+    <input id="fontColor" type="color" value="#ff69b4">
+
+    <!-- Background Color -->
+    <label style="color:white; margin-left:20px;">BG:</label>
+    <input id="bgColor" type="color" value="#000000">
+
+  </div>
+
+  <!-- Text Input -->
+  <input id="textInput" type="text" placeholder="Enter your text"
          style="font-size:20px; padding:5px; width:300px;">
-  
+
   <!-- SVG -->
-  <svg id="neon" width="800" height="200">
-    <text id="neonText" x="50" y="120" font-size="48" fill="hotpink">
-      CYBER PINKS ORGANIZATION
+  <svg id="neon" width="800" height="200" style="margin-top:20px;">
+    <text id="neonText" x="50" y="120" font-size="48" fill="hotpink"
+          style="font-family: 'Press Start 2P', cursive;">
+      CYBER NEON
     </text>
   </svg>
 
-  <!-- JavaScript to update SVG text -->
+  <!-- JavaScript -->
   <script>
     const input = document.getElementById("textInput");
     const neonText = document.getElementById("neonText");
+    const fontSelect = document.getElementById("fontSelect");
+    const fontSize = document.getElementById("fontSize");
+    const fontColor = document.getElementById("fontColor");
+    const bgColor = document.getElementById("bgColor");
+    const svg = document.getElementById("neon");
 
+    // Update text
     input.addEventListener("input", () => {
       neonText.textContent = input.value;
+    });
+
+    // Change font
+    fontSelect.addEventListener("change", () => {
+      neonText.style.fontFamily = fontSelect.value;
+    });
+
+    // Change size
+    fontSize.addEventListener("input", () => {
+      neonText.setAttribute("font-size", fontSize.value);
+    });
+
+    // Change text color
+    fontColor.addEventListener("input", () => {
+      neonText.setAttribute("fill", fontColor.value);
+    });
+
+    // Change background color
+    bgColor.addEventListener("input", () => {
+      svg.style.background = bgColor.value;
     });
   </script>
 
