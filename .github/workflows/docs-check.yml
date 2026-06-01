@@ -22,6 +22,7 @@ jobs:
           import sys
 
           required_files = [
+              Path('.github/workflows/docs-check.yml'),
               Path('README.md'),
               Path('docs/index.html'),
               Path('docs/STRUCTURE.md'),

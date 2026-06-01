@@ -69,15 +69,22 @@ The README currently embeds the hosted `cyber-pinks-organization.svg`. To change
 
 ## GitHub branch protection
 
-The warning "Your main branch isn't protected" is a repository setting, not a code issue. A maintainer with repository admin access should configure GitHub branch protection or a branch ruleset for `main`:
+The GitHub notice **Rulesets / New branch ruleset / Protect your most important branches** is expected when `main` does not have repository-level protection yet. This is an admin setting in GitHub, not something a pull request can turn on by itself. A maintainer with repository admin access should create a branch ruleset for `main`:
 
 1. Open the repository on GitHub and go to **Settings**.
-2. Open **Branches** or **Rules** and add a rule that targets `main`.
-3. Disable force pushes and branch deletion for `main`.
-4. Require pull requests before merging.
-5. Require status checks before merging, then select the `docs-check / validate-static-docs` workflow check after it has run at least once.
+2. Open **Rules** > **Rulesets**.
+3. Choose **New ruleset** > **New branch ruleset**.
+4. Name it something like `main-protection`.
+5. Set **Enforcement status** to **Active**. Use **Evaluate** only when you want to preview the impact before enforcing the rules.
+6. Under **Target branches**, add `main` or choose the default branch target if `main` is the default branch.
+7. Enable rules that protect the branch:
+   - **Restrict deletions** so `main` cannot be deleted accidentally.
+   - **Block force pushes** so published history cannot be rewritten unexpectedly.
+   - **Require a pull request before merging** so changes are reviewed before reaching `main`.
+   - **Require status checks to pass** and select `docs-check / validate-static-docs` after this workflow has run at least once.
+8. Save or create the ruleset.
 
-This repository includes `.github/workflows/docs-check.yml` so GitHub has a lightweight status check that maintainers can require before merging documentation or static-site changes.
+This repository includes `.github/workflows/docs-check.yml` so GitHub has a lightweight status check that maintainers can require before merging documentation or static-site changes. If the `docs-check / validate-static-docs` check is not selectable yet, push this workflow first, let GitHub Actions run once on a pull request or on `main`, and then return to the ruleset settings to add it.
 
 ## Validation checklist
 
