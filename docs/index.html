@@ -109,87 +109,8 @@
       { name: 'Pixelify Sans (Pixel)', value: '\'Pixelify Sans\', sans-serif' },
       { name: 'DotGothic16 (Dot)', value: '\'DotGothic16\', sans-serif' },
       { name: 'Space Grotesk', value: '\'Space Grotesk\', sans-serif' }
-    ],
-
-async function downloadSVG() {
-  const originalSvg = document.getElementById('export-svg');
-  if (!originalSvg) return;
-
-  // clone and ensure namespaces
-  const clonedSvg = originalSvg.cloneNode(true);
-  clonedSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-  clonedSvg.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
-
-  // update dynamic filter value (assumes blur element has id="blur")
-  const blurEl = clonedSvg.querySelector('#blur');
-  if (blurEl) blurEl.setAttribute('stdDeviation', String(this.glow || 4));
-
-  // prepare font embedding
-  try {
-    // Map selectedFont to Google family name (adjust mapping as needed)
-    const fontMap = {
-      "Press Start 2P": "Press+Start+2P",
-      "Orbitron": "Orbitron",
-      "VT323": "VT323",
-      "Fira Code": "Fira+Code",
-      "Pixelify Sans": "Pixelify+Sans",
-      "DotGothic16": "DotGothic16",
-      "Space Grotesk": "Space+Grotesk"
-    };
-    // extract base font name (strip quotes and weight)
-    const fontKey = (this.selectedFont || '').split(',')[0].replace(/['"]/g, '').trim();
-    const gName = fontMap[fontKey] || fontKey.replace(/\s+/g, '+');
-
-    const cssUrl = `https://fonts.googleapis.com/css2?family=${gName}&display=swap`;
-    const cssResp = await fetch(cssUrl);
-    const cssText = await cssResp.text();
-
-    // find woff2 url if present
-    const urlMatches = Array.from(cssText.matchAll(/url\((https:[^)]+)\)/g)).map(m => m[1]);
-    const woff2 = urlMatches.find(u => u.endsWith('.woff2')) || urlMatches[0];
-if (woff2) {
-  const fontBlob = await (await fetch(woff2)).blob();
-  const base64Font = await new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(fontBlob);
-  });
-
-  let defs = clonedSvg.querySelector('defs');
-  if (!defs) {
-    defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-    clonedSvg.insertBefore(defs, clonedSvg.firstChild);
-  }
-
-  const styleEl = document.createElementNS('http://www.w3.org/2000/svg', 'style');
-  styleEl.textContent = `
-    @font-face {
-      font-family: 'MyEmbeddedFont';
-      src: url(${base64Font}) format('woff2');
-      font-weight: 400;
-      font-style: normal;
-    }
-    svg { font-family: 'MyEmbeddedFont', sans-serif; }
-  `;
-  defs.appendChild(styleEl);
-}
-  } catch (err) {
-    console.warn('Font embedding failed, continuing without embedded font.', err);
-  }
-
-  // serialize
-  let svgString = new XMLSerializer().serializeToString(clonedSvg);
-  svgString = '<?xml version="1.0" standalone="no"?>\n' + svgString;
-
-  const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'cyber-neon.svg';
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-}" class="layout-main">
+    ]
+  }" class="layout-main">
 
     <div class="layout-grid">
       <div class="layout-col">
