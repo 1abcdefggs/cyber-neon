@@ -1,1 +1,4 @@
 idea/
+Archive/
+node_modules/
+.vscode

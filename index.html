@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.cdnfonts.com; font-src 'self' data: https://fonts.gstatic.com https://fonts.cdnfonts.com; img-src 'self' data:;">
+  <title>CYBER-PINKS Neon Generator</title>
+  <!-- Google Fonts 59 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Bitcount+Grid+Single+Ink&family=Bitcount+Prop+Double+Ink&family=Bitcount&family=Bytesized&family=Comfortaa&family=Coral+Pixels&family=Dancing+Script&family=Datatype&family=DotGothic16&family=Doto&family=Edu+AU+VIC+WA+NT+Dots&family=Electrolize&family=Exo+2&family=Fira+Code&family=Geostar&family=Geostar+Fill&family=Jacquarda+Bastarda+9&family=Jersey+10+Charted&family=Jersey+25+Charted&family=Libre+Barcode+39+Text&family=Londrina+Outline&family=Major+Mono+Display&family=Michroma&family=Micro+5&family=Micro+5+Charted&family=Monoton&family=Mr+Dafoe&family=Neonderthaw&family=Noto+Sans&family=Noto+Serif&family=Orbitron&family=Oxanium&family=PT+Mono&family=Pixelify+Sans&family=Playwrite+AU+VIC+Guides&family=Press+Start+2P&family=Raleway+Dots&family=Roboto&family=Russo+One&family=Sacramento&family=Science+Gothic&family=Share+Tech&family=Share+Tech+Mono&family=Silkscreen&family=Six+Caps&family=Sixtyfour&family=Sixtyfour+Convergence&family=Source+Code+Pro&family=Space+Grotesk&family=Space+Mono&family=Syncopate&family=Tilt+Neon&family=Tilt+Prism&family=Tilt+Warp&family=Tiny5&family=VT323&family=Workbench&family=Zen+Dots&text=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%20()&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.cdnfonts.com/css/ds-digital" rel="stylesheet">
+<script src="main.js" type="module" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+</head>
+<body x-data="neonGenerator" :data-theme="uiTheme">
+
+  <div class="layout-main" x-init="initSvgJs()">
+  <!-- theme -->
+<div style="display: flex; justify-content: flex-end; margin-bottom: 0px;">
+  <button type="button" @click="toggleUiTheme()" class="align-btn" 
+          style="border-color: var(--accent); color: var(--accent); padding: 0.5rem; font-weight: bold; background: rgba(0,0,0,0.3);">
+    
+    <!-- PINKmode text color -->
+    <template x-if="uiTheme === 'pink'">
+      <span>
+        SWITCH TO <span style="color: #00ffff; text-shadow: 0 0 8px #00ffff;">CYAN 🎨</span>
+      </span>
+    </template>
+
+    <!-- CYAN mode text color -->
+    <template x-if="uiTheme === 'cyan'">
+      <span>
+        SWITCH TO <span style="color: #ff1493; text-shadow: 0 0 8px #ff1493;">PINK 🎨</span>
+      </span>
+    </template>
+
+  </button>
+</div>
+
+    <!-- [PREVIEW] svg -->
+    <div class="preview-frame header" 
+         @dblclick="togglePreviewExpand()"
+         :style="`height: ${isPreviewExpanded ? '800px' : dynamicHeight + 'px'}; transition: all 0.5s ease;`"
+         style="position: relative; width: 100%; overflow: hidden; cursor: ns-resize;">
+          <svg id="export-svg" class="preview-svg" :view-box="`0 0 1200 ${dynamicHeight}`" preserveAspectRatio="xMidYMid slice" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" :style="`perspective: 1000px; transform-style: preserve-3d;`">
+  <defs>
+<filter id="neonFX" x="-100%" y="-100%" width="300%" height="300%">
+
+  <feFlood :flood-color="outlineColor" result="neonColor"/>
+  <feComposite in="neonColor" in2="SourceGraphic" operator="in" result="neonCore"/>
+
+
+  <feGaussianBlur in="neonCore" :stdDeviation="glow" result="blurOuter"/>
+  <feComponentTransfer in="blurOuter" result="glowOuter">
+    <feFuncA type="linear" slope="2"/> 
+  </feComponentTransfer>
+
+
+  <feGaussianBlur in="neonCore" :stdDeviation="innerGlow" result="blurInner"/>
+  <feComposite in="blurInner" in2="SourceGraphic" operator="in" result="glowInner"/>
+
+
+  <feTurbulence type="fractalNoise" :baseFrequency="noiseFreq" numOctaves="3" result="noise"/>
+  <feDisplacementMap in="SourceGraphic" in2="noise" :scale="noiseFreq * 1000" result="distortedText"/>
+  <feGaussianBlur in="distortedText" :stdDeviation="textBlur" result="finalText"/>
+  <feMerge>
+    <feMergeNode in="glowOuter"/> 
+    <feMergeNode in="glowInner"/> 
+    <feMergeNode in="finalText"/> 
+  </feMerge>
+</filter>
+    <pattern id="scanlinePattern" width="100%" :height="10 / (scanlineDensity || 1)" patternUnits="userSpaceOnUse">
+      <rect width="100%" height="1" fill="#fff" :opacity="scanlineOpacity"/>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" :fill="bgColor" />
+  <rect width="100%" height="100%" fill="url(#scanlinePattern)" pointer-events="none" />
+  <text :x="getTextX()" y="50%" :text-anchor="getTextAnchor()" dominant-baseline="middle"
+        :font-size="isAdvanced ? fontSize : Math.round(baseSize * mdSteps[mdStepIndex].scale)" 
+        :fill="isHollow ? 'none' : fillColor" 
+        :stroke="outlineColor" 
+        :stroke-width="isHollow ? (outlineWidth || 2) : outlineWidth" 
+        :stroke-opacity="outlineOpacity"
+        filter="url(#neonFX)" 
+        :font-family="selectedFont" 
+        :font-weight="fontWeight" 
+        :letter-spacing="letterSpacing + 'em'"
+        :style="`transform: rotateX(${perspective / 10}deg) rotate(${textRotate}deg) skewX(${textSkew}deg); transform-origin: center; transition: all 0.1s ease;`"
+        x-html="getSvgTextHtml()">
+  </text>
+</svg>
+
+<!-- [TOP FLAT BAR: CANVAS BG] -->
+<div class="flat-bar tab-top" style="position: absolute; top: 0; left: 0; right: 0; border-bottom: 1px solid rgba(255,255,255,0.1) !important;">
+  <!-- lavel -->
+  <div class="flat-label" :style="`background: ${fillColor}; box-shadow: 2px 0 10px ${fillColor}88;`" x-text="'BG'"></div>
+  
+  <!-- swatch -->
+  <div class="flat-swatch-group">
+    <template x-for="c in bgPalette" :key="'bg-f-'+c">
+      <button class="flat-swatch" 
+              :class="{'active': bgColor === c}"
+              @click="bgColor = c"
+              :style="`background: ${c};`"
+              :title="c">
+        <span :style="`color: ${fillColor}; text-shadow: 0 0 5px #000;`" x-text="c.toUpperCase()"></span>
+      </button>
+    </template>
+  </div>
+</div>
+
+
+<div class="flat-bar tab-bottom" style="position: absolute; bottom: 0; left: 0; right: 0; border-top: 1px solid rgba(255,255,255,0.1) !important;">
+  <div class="flat-label" :style="`background: ${fillColor}; box-shadow: 2px 0 10px ${fillColor}88;`" x-text="'TEXT'"></div>
+  
+  <!-- swatch -->
+  <div class="flat-swatch-group">
+    <template x-for="c in textPalette" :key="'txt-f-'+c">
+      <button class="flat-swatch" 
+              :class="{'active': fillColor === c}"
+              @click="fillColor = c"
+              :style="`background: transparent; border-left: 1px solid rgba(255,255,255,0.05);`"
+              :title="c">
+        <span :style="`color: ${c}; text-shadow: 0 0 8px ${c};`" x-text="c.toUpperCase()"></span>
+      </button>
+    </template>
+  </div>
+</div></div>  
+
+    <!-- main -->
+    <div class="main-pane">
+      
+      <!-- SIDEBAR --><!-- SIDEBAR (FONTS) -->
+<aside class="sidebar">
+  <div style="font-size: 1.1rem; margin-bottom: var(--space-md); font-weight: bold; color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: 5px;">SELECT FONT</div>
+
+  <div style="display: flex; gap: 5px; margin-bottom: 10px;">
+    <button @click="expandedCategories = fontCategories.map(c => c.name)" class="align-btn" style="font-size: 0.7rem; flex: 1;">OPEN ALL</button>
+    <button @click="expandedCategories = []" class="align-btn" style="font-size: 0.7rem; flex: 1;">CLOSE ALL</button>
+  </div>
+
+  <div class="font-list">
+    <template x-for="category in fontCategories" :key="category.name">
+      <div style="margin-bottom: 1rem; border-bottom: 1px solid var(--accent,0.3); padding-bottom: 10px;">
+        <div class="category-header" x-text="category.name"></div>
+        
+        <div style="display: flex; flex-direction: column;">
+          <template x-for="(f, index) in category.items" :key="f.value">
+            <div x-show="expandedCategories.includes(category.name) || index < 3">
+              <button type="button" 
+                      class="font-button" 
+                      :class="{'active': selectedFont === f.value}" 
+                      :style="`font-family: ${f.value}`" 
+                      @click="selectedFont = f.value" 
+                      x-text="f.name">
+              </button>
+            </div>
+          </template>
+        </div>
+
+        <!-- MORE / LESS  -->
+        <template x-if="category.items.length > 3">
+          <button type="button" 
+                  @click="toggleCategory(category.name)" 
+                  style="width: 100%; text-align: right; color: var(--accent); background: none; border: none; font-size: 0.7rem; cursor: pointer; padding-top: 5px; opacity: 0.6;"
+                  @mouseenter="$el.style.opacity = 1"
+                  @mouseleave="$el.style.opacity = 0.6">
+            <span x-text="expandedCategories.includes(category.name) ? '▲ LESS' : '▼ MORE (+' + (category.items.length - 3) + ')'"></span>
+          </button>
+        </template>
+      </div>
+    </template>
+  </div>
+</aside>
+      <!-- PREVIEW COLUMN -->
+      <div class="preview-column">
+        
+        <!-- DOWNLOAD -->
+        <button type="button" @click="downloadSVG()" style="width: 100%; padding: 18px; background: var(--accent); color: #fff; font-weight: 900; border: none; border-radius: 8px; cursor: pointer; box-shadow: var(--panel-glow); letter-spacing: 0.1em; margin-bottom: 10px;">
+          DOWNLOAD SVG
+        </button>
+
+        <!-- PRESET GRID --><!-- PRESET GRID PANEL -->
+<div class="control-group" style="padding: 15px; margin-bottom: 10px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+    <div style="font-size: 0.7rem; color: var(--accent); font-weight: 900; letter-spacing: 0.1em;">
+      SELECT STYLE PRESET // ⚡ QUICK FX
+    </div>
+    <div style="display: flex; gap: 10px;">
+      <button type="button" @click="resetAllFX()" class="align-btn" style="font-size: 0.5rem; opacity: 0.6;">[ ✖ RESET ]</button>
+      <button type="button" @click="isPresetExpanded = !isPresetExpanded" class="align-btn" style="font-size: 0.5rem;">
+        <span x-text="isPresetExpanded ? '▲ CLOSE' : '▼ SHOW ALL'"></span>
+      </button>
+    </div>
+  </div>
+  
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px;">
+    <template x-for="(p, index) in advancedPresets" :key="p.id">
+      <!-- index < 4 (1)    -->
+      <div x-show="isPresetExpanded || index < 4">
+        <button type="button" @click="applyAdvancedPreset(p)" 
+                class="preset-card-mini" :class="{'active': activePresetId === p.id}"
+                style="position: relative; width: 100%;">
+          <svg style="position: absolute; width: 0; height: 0;"><defs><filter :id="'filter-' + p.id"><feGaussianBlur in="SourceGraphic" :stdDeviation="(p.params.glow || 0) / 10" result="g"/><feTurbulence type="fractalNoise" :baseFrequency="(p.params.noiseFreq || 0)" numOctaves="1" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" :scale="(p.params.noiseScale || 0) / 5" result="d"/><feMerge><feMergeNode in="g"/><feMergeNode in="d"/></feMerge></filter></defs></svg>
+          <div :style="`filter: url(#filter-${p.id}); transform: rotate(${(p.params.textRotate || 0) / 4}deg);`" style="font-size: 1.4rem;" x-text="p.icon"></div>
+          <span style="font-size: 0.55rem; font-weight: bold; text-transform: uppercase; margin-top: 6px;" x-text="p.name"></span>
+        </button>
+      </div>
+    </template>
+  </div>
+</div>
+
+        <!-- INPUT PANEL -->
+        <div class="double-border-panel">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+              <label for="neon-main-input" style="font-size: 0.7rem; color: var(--accent); font-weight: 900; cursor: pointer;">SYSTEM // INPUT & STYLE</label>
+              <div style="display: flex; align-items: baseline; gap: 5px; background: rgba(0,0,0,0.3); padding: 2px 10px; border-radius: 4px; border-left: 3px solid var(--accent);">
+                <span x-text="isAdvanced ? fontSize : Math.round(baseSize * mdSteps[mdStepIndex].scale)" style="font-size: 1.8rem; color: var(--accent); font-family: 'DS-Digital'; line-height: 1;"></span>
+                <span style="font-size: 0.7rem; color: var(--accent); font-weight: bold;">PX</span>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+              <div style="display: flex; gap: 5px;">
+                <button type="button" class="align-btn" :class="{'active': fontWeight == '400'}" @click="fontWeight = '400'">Normal</button>
+                <button type="button" class="align-btn" :class="{'active': fontWeight == '700'}" @click="fontWeight = '700'">Bold</button>
+              </div>
+              <div style="display: flex; gap: 5px;">
+                <button type="button" class="align-btn" :class="{'active': textAlign === 'left'}" @click="textAlign = 'left'">L</button>
+                <button type="button" class="align-btn" :class="{'active': textAlign === 'center'}" @click="textAlign = 'center'">C</button>
+                <button type="button" class="align-btn" :class="{'active': textAlign === 'right'}" @click="textAlign = 'right'">R</button>
+              </div>
+            </div>
+          </div>
+          <textarea id="neon-main-input" x-model="text" rows="3" :style="`text-align: ${textAlign}; font-weight: ${fontWeight}; background: transparent; color: #fff; border: none; font-size: 1.3rem; outline: none; width: 100%;`"></textarea>
+        </div>
+
+<!-- SCALE & SPACING -->
+<div class="control-group">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+    <div class="ui-section-title" style="margin-bottom: 0;">TYPOGRAPHY // SCALE SYSTEM</div>
+    <button type="button" @click="toggleAdvanced()" class="align-btn" style="font-size: 0.5rem;" x-text="isAdvanced ? '[MANUAL]' : '[TAGS]'"></button>
+  </div>
+  
+  <template x-if="!isAdvanced">
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <!-- min 20、max  100 -->
+      <input type="range" x-model="baseSize" min="20" max="100" class="cyber-slider">
+      <div class="segmented-control">
+        <template x-for="(step, index) in mdSteps">
+          <button type="button" @click="mdStepIndex = index" class="segment-btn" :class="{'active': mdStepIndex === index}" x-text="step.tag"></button>
+        </template>
+      </div>
+    </div>
+  </template>
+
+  <!-- if manual mode 20px -->
+  <template x-if="isAdvanced">
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <input type="range" x-model="fontSize" min="20" max="400" class="cyber-slider">
+    </div>
+  </template>
+
+  <div class="ui-section-title" style="margin-top: 20px;">CORE SPACING</div>
+  <div class="slider-row">
+    <div class="slider-group">
+      <label class="ui-label" for="slider-tracking">Tracking <span x-text="letterSpacing"></span></label>
+      <input type="range" id="slider-tracking" x-model="letterSpacing" min="-0.1" max="0.5" step="0.01" class="cyber-slider">
+    </div>
+    <div class="slider-group">
+      <label class="ui-label" for="slider-lineheight">Line Height <span x-text="lineHeight"></span></label>
+      <input type="range" id="slider-lineheight" x-model="lineHeight" min="0.8" max="2.5" step="0.1" class="cyber-slider">
+    </div>
+  </div>
+</div></div>
+
+      <!-- CONTROLS COLUMN (RIGHT) -->
+      <div class="controls-column">
+          <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(var(--accent-rgb), 0.8);font-size:1rem;">
+            <button type="button" @click="isHollow = !isHollow" class="align-btn" style="width: 100%;font-size: 2rem;" :class="{'active': isHollow}">HOLLOW MODE: <span x-text="isHollow ? 'ON' : 'OFF'"></span></button>
+            <div x-show="isHollow" style="margin-top: 10px;"><input type="range" x-model="outlineWidth" min="0.5" max="8" step="0.5" class="cyber-slider"></div>
+          </div>
+
+<div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; background: rgba(var(--accent-rgb), 0.1); padding: 10px; border-radius: 4px; border: 1px solid var(--accent);">
+  <label style="font-size: 0.7rem; color: var(--accent); font-weight: 900; letter-spacing: 0.1em; flex-shrink: 0;">
+    NEON LIGHT COLOR:
+  </label>
+  
+  <!-- （） -->
+  <input type="color" x-model="outlineColor" 
+         style="width: 40px; height: 25px; border: none; background: transparent; cursor: pointer;">
+  
+  <!--  -->
+  <span x-text="outlineColor.toUpperCase()" 
+        style="font-size: 0.8rem; font-family: monospace; color: var(--accent); font-weight: bold;">
+  </span>
+
+  <div style="flex: 1; text-align: right;">
+    <span style="font-size: 0.6rem; opacity: 0.6;">※This affects Glow & Stroke</span>
+  </div>
+</div>
+
+
+
+        <div class="control-group">
+          <div class="ui-section-title">01. LIGHT & ILLUMINATION</div>
+          <div class="slider-group"><label class="ui-label" for="side-glow">Glow <span x-text="glow"></span></label><input type="range" id="side-glow" x-model="glow" min="0" max="50" class="cyber-slider"></div>
+          <div class="slider-group" style="margin-top:15px;"><label class="ui-label" for="side-inner">Inner <span x-text="innerGlow"></span></label><input type="range" id="side-inner" x-model="innerGlow" min="0" max="20" class="cyber-slider"></div>
+          <div class="slider-group" style="margin-top:15px;"><label class="ui-label" for="side-blur">Blur <span x-text="textBlur"></span></label><input type="range" id="side-blur" x-model="textBlur" min="0" max="10" step="0.5" class="cyber-slider"></div>
+        </div>
+        <div class="control-group">
+          <div class="ui-section-title">02. TRANSFORM & NOISE</div>
+          <div class="slider-group"><label class="ui-label" for="side-persp">3D Persp <span x-text="perspective"></span></label><input type="range" id="side-persp" x-model="perspective" min="0" max="1000" class="cyber-slider"></div>
+          <div class="slider-group" style="margin-top:15px;"><label class="ui-label" for="side-noise">Gas Leak <span x-text="noiseFreq"></span></label><input type="range" id="side-noise" x-model="noiseFreq" min="0" max="0.1" step="0.001" class="cyber-slider"></div>
+          <div class="slider-group" style="margin-top:15px;"><label class="ui-label" for="side-chromatic">RGB Split <span x-text="chromaticOffset"></span></label><input type="range" id="side-chromatic" x-model="chromaticOffset" min="0" max="15" class="cyber-slider"></div>
+
+        </div>
+      </div>
+
+    </div> <!-- /main-pane -->
+  </div> <!-- /layout-main -->
+
+</body>
+</html>

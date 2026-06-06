@@ -24,7 +24,7 @@ jobs:
           required_files = [
               Path('.github/workflows/docs-check.yml'),
               Path('README.md'),
-              Path('docs/index.html'),
+              Path('index.html'),
               Path('docs/STRUCTURE.md'),
               Path('docs/cyber-pinks-organization.svg'),
               Path('docs/neon-smil.svg'),
@@ -37,6 +37,7 @@ jobs:
 
           markdown_files = [path for path in required_files if path.suffix == '.md' and path.exists()]
           for path in markdown_files:
+
               if path.read_text(encoding='utf-8').endswith('\n') is False:
                   errors.append(f'Missing trailing newline: {path}')
 
@@ -45,16 +46,18 @@ jobs:
               for link in re.findall(r'\[[^\]]+\]\(([^)]+)\)', text):
                   if link.startswith(('http://', 'https://', '#', 'mailto:')):
                       continue
+
                   target = (path.parent / link).resolve()
                   if not target.exists():
                       errors.append(f'Broken relative Markdown link in {path}: {link}')
 
-          html = Path('docs/index.html')
+
+          html = Path('index.html')
           if html.exists():
               html_text = html.read_text(encoding='utf-8')
               for expected in ('downloadSVG', 'x-data', 'export-svg'):
                   if expected not in html_text:
-                      errors.append(f'docs/index.html is missing expected marker: {expected}')
+                      errors.append(f'index.html is missing expected marker: {expected}')
 
           if errors:
               print('\n'.join(errors), file=sys.stderr)

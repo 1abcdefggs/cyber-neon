@@ -1,0 +1,10 @@
+{
+  "name": "cyber-pinks-neon-generator",
+  "version": "0.2.0",
+  "description": "High-end Cyberpunk Neon SVG Generator",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "author": "1abcdefggs",
+  "license": "MIT"
+}
